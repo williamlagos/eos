@@ -1,0 +1,10 @@
+CMAKE_MINIMUM_REQUIRED(VERSION 2.8)
+
+PROJECT(helloworld)
+
+INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR}/../../include)
+LINK_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR}/../../library)
+
+ADD_EXECUTABLE(helloworld helloworld.cc)
+
+TARGET_LINK_LIBRARIES(helloworld zhockon-python)

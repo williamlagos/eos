@@ -1,0 +1,13 @@
+{ 
+    "Engine":{
+	"invd":"samples,2,invasores",
+	"coro":"coronae",
+	"phen":"phenomena",
+	"kong":"samples,2,kong",
+	"naan":"naanphea",
+	"euph":"euphoria",
+	"alur":"alurora",
+	"chmp":"samples,2,chimp"
+    },
+    "Creation":{}
+}
