@@ -24,8 +24,6 @@ if(BOX2D_BUILD_EXAMPLES)
 
   # Testbed and dependencies.
   find_package(OpenGL REQUIRED)
-  add_subdirectory(freeglut)
-  add_subdirectory(glui)
 endif(BOX2D_BUILD_EXAMPLES)
 
 if(BOX2D_INSTALL_DOC)
