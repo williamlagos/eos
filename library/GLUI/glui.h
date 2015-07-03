@@ -35,7 +35,7 @@
 #ifdef __APPLE__
 	#include <GLUT/glut.h>
 #else
-	#include "freeglut/freeglut.h"
+	#include "GLUT/freeglut.h"
 #endif
 
 #include <cstdlib>

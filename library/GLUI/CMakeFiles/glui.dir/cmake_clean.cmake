@@ -1,4 +1,4 @@
-FILE(REMOVE_RECURSE
+file(REMOVE_RECURSE
   "CMakeFiles/glui.dir/algebra3.cpp.o"
   "CMakeFiles/glui.dir/arcball.cpp.o"
   "CMakeFiles/glui.dir/glui_add_controls.cpp.o"
@@ -36,6 +36,6 @@ FILE(REMOVE_RECURSE
 )
 
 # Per-language clean rules from dependency scanning.
-FOREACH(lang CXX)
-  INCLUDE(CMakeFiles/glui.dir/cmake_clean_${lang}.cmake OPTIONAL)
-ENDFOREACH(lang)
+foreach(lang CXX)
+  include(CMakeFiles/glui.dir/cmake_clean_${lang}.cmake OPTIONAL)
+endforeach()
