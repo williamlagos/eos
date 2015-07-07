@@ -2,7 +2,7 @@
 CMakeFiles/
 CMakeCache.txt
 Makefile
-cmake_install.cmake
+*.cmake
 
 # Crosstools tarballs
 x-tools*

@@ -4,3 +4,15 @@
 [submodule "libjsonrpc"]
 	path = libjsonrpc
 	url = git@github.com:efforia/libjsonrpc.git
+[submodule "libwiring"]
+	path = libwiring
+	url = git@github.com:efforia/libwiring.git
+[submodule "fabric"]
+	path = fabric
+	url = git@github.com:fabric/fabric.git
+[submodule "docker"]
+	path = docker
+	url = git@github.com:docker/docker.git
+[submodule "build/crosstool-ng"]
+	path = build/crosstool-ng
+	url = https://github.com/crosstool-ng/crosstool-ng.git
