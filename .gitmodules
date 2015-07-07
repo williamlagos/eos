@@ -16,3 +16,9 @@
 [submodule "build/crosstool-ng"]
 	path = build/crosstool-ng
 	url = https://github.com/crosstool-ng/crosstool-ng.git
+[submodule "dinamo/box2d"]
+	path = dinamo/box2d
+	url = git@github.com:efforia/box2d.git
+[submodule "dinamo/sdl2"]
+	path = dinamo/sdl2
+	url = git@github.com:efforia/sdl2.git
