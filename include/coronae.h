@@ -17,14 +17,54 @@
  * along with Zhockon.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "coronae.h"
-#include <zhockon.h>
-using namespace Zhockon;
+#include "parser.h"
+#include <pthread.h>
+#include <jsonrpc.h>
+#include <string>
+#include <cstring>
+
+#define HOST "127.0.0.1"
+#define PORT 4004
+#define JSONRPC_VERSION "2.0"
+#define STD_ID "1"
 using namespace Json;
+using std::string;
 
 namespace Coronae{
-class Extensor : public Module{
-public:
-	Extensor(string);
+struct Message{
+	char queryMsg[100];
+	char repseMsg[100];
 };
+
+class Extensor;
+
+class Adapter{
+private:
+	string adapterName;
+public:
+	Adapter(string);
+	~Adapter();
+	bool Init();
+	string methodCall(char*);
+	string getAdapterName();
+};
+
+class Creator{
+public:
+	Creator();
+};
+
+class Connector{
+public:
+	Connector(){};
+	bool baseMethod(const Value&,Value&);
+};
+
+
+//bool RemMethod(string);
+bool CoronaeInit();
+bool CoronaeCall();
+void* ManagerThread(void*);
+void* SubjectThread(void*);
+//void* SendMethod(void*);
 };

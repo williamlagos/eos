@@ -1,10 +1,9 @@
-#include "elements.h"
-using namespace std;
+#include "parser.h"
 
 void load_json(const char* name)
 {
 	std::ifstream stream;
-	stream.open("elements.json",ifstream::in);
+	stream.open("elements.json",std::ifstream::in);
 	std::string line,buffer;
 	if(stream.is_open()){
 		while(stream.good()){
@@ -20,4 +19,24 @@ void load_json(const char* name)
 		else if(json_type(*i) == JSON_NODE) continue;
 		printf("%s",json_name(*i)); i++;
 	}
+}
+
+Reader::Reader()
+{
+
+}
+
+void Reader::parse(std::string str,Value &val)
+{
+
+}
+
+FastWriter::FastWriter()
+{
+
+}
+
+std::string FastWriter::write(Value &val)
+{
+
 }

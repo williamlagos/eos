@@ -19,7 +19,6 @@
 
 #ifndef ZHOCKON_H
 #define ZHOCKON_H
-#define NULL 0
 #include "base.h"
 #include "platform.h"
 #include <iostream>
