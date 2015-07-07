@@ -26,7 +26,7 @@ App::App()
 
 int App::start()
 {
-	std::cout << "Hello World!" << std::endl;
+	std::cout << "HUB command-line utility" << std::endl;
 	return 0;
 }
 
