@@ -1,0 +1,6 @@
+[submodule "libssh"]
+	path = libssh
+	url = git@github.com:efforia/libssh.git
+[submodule "libjsonrpc"]
+	path = libjsonrpc
+	url = git@github.com:efforia/libjsonrpc.git
