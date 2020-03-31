@@ -1,4 +1,8 @@
 EOS SDK
 ==========
 
-Este é o kit de desenvolvimento para aplicações da Internet das Coisas com a plataforma EOS. Possui todas as ferramentas necessárias para integrar o que você quiser com plataformas como o HUB, Raspberry Pi ou Banana Pi. 
+EOS is a services and applications scheduler for GNU/Linux. This was made
+originally for Arch Linux ARM on a Raspberry Pi, but it could be used for any
+other operating system. Written in C and Python/C, and some bash scripting.
+
+This is the EOS software development kit for creating IoT (Internet of Things) applications.
