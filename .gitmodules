@@ -16,3 +16,6 @@
 [submodule "elements"]
 	path = elements
 	url = git@github.com:williamlagos/elements.git
+[submodule "synapse"]
+	path = synapse
+	url = git@github.com:williamlagos/synapse
