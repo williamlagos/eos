@@ -16,6 +16,3 @@
 [submodule "elements"]
 	path = elements
 	url = git@github.com:williamlagos/elements.git
-[submodule "eos"]
-	path = eos
-	url = git@github.com:williamlagos/eos
