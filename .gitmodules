@@ -8,5 +8,5 @@
 	path = dinamo/sdl2
 	url = git@github.com:efforia/sdl2.git
 [submodule "synapse"]
-	path = synapse
+	path = tools/synapse
 	url = git@github.com:williamlagos/synapse
