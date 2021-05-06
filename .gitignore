@@ -21,6 +21,9 @@ x-tools*
 *.la
 *.a
 
+# Vagrant specific folders
+.vagrant
+
 # Python scripting gitignore
 # Byte-compiled / optimized / DLL files
 __pycache__/
