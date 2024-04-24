@@ -12,7 +12,7 @@ Vagrant.configure("2") do |config|
 
   # Every Vagrant development environment requires a box. You can search for
   # boxes at https://vagrantcloud.com/search.
-  config.vm.box = "archlinux/archlinux"
+  # config.vm.box = "archlinux/archlinux"
 
   # Disable automatic box update checking. If you disable this, then
   # boxes will only be checked for updates when the user runs
@@ -49,12 +49,13 @@ Vagrant.configure("2") do |config|
   # backing providers for Vagrant. These expose provider-specific options.
   # Example for VirtualBox:
   #
-  config.vm.provider "virtualbox" do |vb|
-  #   # Display the VirtualBox GUI when booting the machine
-  #   vb.gui = true
+  config.vm.provider "docker" do |vb|
+  # Display the VirtualBox GUI when booting the machine
+  # vb.gui = true
   #
-  #   # Customize the amount of memory on the VM:
-     vb.memory = "512"
+  # Customize the amount of memory on the VM:
+	  vb.image = "archlinux/archlinux"
+  # vb.memory = "512"
   end
   #
   # View the documentation for the provider you are using for more
