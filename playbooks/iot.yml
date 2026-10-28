@@ -1,0 +1,50 @@
+---
+- name: Provision EOS IoT & Edge Node (armv6h, armv7h, aarch64, x86_64)
+  hosts: eos_iot
+  become: true
+  vars:
+    eos_root: "{{ playbook_dir }}/.."
+    iot_packages: "{{ lookup('file', eos_root + '/packages/pkglists/iot.txt').splitlines() | select('match', '^[^#].+') | list }}"
+
+  tasks:
+    - name: Install EOS IoT packages via pacman
+      community.general.pacman:
+        name: "{{ iot_packages }}"
+        state: present
+        update_cache: true
+
+    - name: Create /opt/eos/bin directory for IoT utilities
+      ansible.builtin.file:
+        path: /opt/eos/bin
+        state: directory
+        mode: "0755"
+
+    - name: Deploy EOS Python 3 hardware and network utilities
+      ansible.builtin.copy:
+        src: "{{ eos_root }}/tools/python/"
+        dest: /opt/eos/bin/
+        mode: "0755"
+
+    - name: Configure Synapse IoT sensor rules
+      ansible.builtin.copy:
+        dest: /etc/synapse/default.cfg
+        mode: "0644"
+        content: |
+          [network]
+          command=/usr/bin/python3 /opt/eos/bin/ssids.py
+          state=test -d /sys/class/net
+
+          [audio]
+          command=/usr/bin/python3 /opt/eos/bin/sound.py
+          state=test -d /dev/snd
+
+    - name: Enable IoT system services on systemd hosts
+      ansible.builtin.systemd:
+        name: "{{ item }}"
+        enabled: true
+        state: started
+      loop:
+        - NetworkManager
+        - avahi-daemon
+        - synapse
+      when: ansible_service_mgr == "systemd"

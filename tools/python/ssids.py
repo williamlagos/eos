@@ -1,12 +1,18 @@
-#!/usr/bin/python
+#!/usr/bin/env python3
 """
-Display all visible SSIDs
+Display all visible Wi-Fi SSIDs via NetworkManager.
 """
 
-import NetworkManager
+import NetworkManager  # type: ignore
 
-for dev in NetworkManager.NetworkManager.GetDevices():
-    if dev.DeviceType != NetworkManager.NM_DEVICE_TYPE_WIFI:
-        continue
-    for ap in dev.SpecificDevice().GetAccessPoints():
-        print '%-30s %dMHz %d%%' % (ap.Ssid, ap.Frequency, ap.Strength)
+
+def list_ssids() -> None:
+    for dev in NetworkManager.NetworkManager.GetDevices():
+        if dev.DeviceType != NetworkManager.NM_DEVICE_TYPE_WIFI:
+            continue
+        for ap in dev.SpecificDevice().GetAccessPoints():
+            print(f"{ap.Ssid:<30s} {ap.Frequency}MHz {ap.Strength}%")
+
+
+if __name__ == "__main__":
+    list_ssids()

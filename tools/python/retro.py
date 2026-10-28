@@ -1,11 +1,19 @@
-#!/usr/bin/python
-import os
-import sys
+#!/usr/bin/env python3
+"""
+Run a command inside the /opt/retro chroot environment.
+"""
+
 import subprocess
+import sys
 
-CMD = "chroot"
-PATH = "/opt/retro"
+CHROOT_CMD = "chroot"
+RETRO_PATH = "/opt/retro"
 
-#if len(sys.argv) > 1: subprocess.call([CMD,PATH,"bash","-c",sys.argv[1]])
-if len(sys.argv) > 1:
-	os.system("%s %s bash -c \"%s\"" % (CMD,PATH,sys.argv[1]))
+if __name__ == "__main__":
+    if len(sys.argv) > 1:
+        sys.exit(
+            subprocess.run(
+                [CHROOT_CMD, RETRO_PATH, "bash", "-c", sys.argv[1]],
+                check=False,
+            ).returncode
+        )

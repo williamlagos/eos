@@ -1,0 +1,14 @@
+[Unit]
+Description=Synapse Smart Process Control and Sensor Supervisor
+After=network.target
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/synapse -f -c /etc/synapse/default.cfg -l - -p 9460
+ExecReload=/usr/bin/synapse-client reload
+ExecStop=/usr/bin/synapse-client stop
+Restart=on-failure
+RestartSec=2
+
+[Install]
+WantedBy=multi-user.target

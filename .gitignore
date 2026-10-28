@@ -1,3 +1,29 @@
+# macOS files
+.DS_Store
+
+# Arch Linux makepkg artifacts
+*.pkg.tar.*
+packages/*/pkg/
+packages/*/src/
+
+# Ansible retry files
+*.retry
+
+# Terraform artifacts
+**/.terraform/*
+*.tfstate
+*.tfstate.*
+crash.log
+crash.*.log
+*.tfvars
+!*.tfvars.example
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+.terraformrc
+terraform.rc
+
 # CMake files
 CMakeFiles/
 CMakeCache.txt

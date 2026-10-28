@@ -1,0 +1,39 @@
+---
+- name: Provision EOS Cloud Application Node
+  hosts: eos_cloud
+  become: true
+  vars:
+    eos_root: "{{ playbook_dir }}/.."
+    cloud_packages: "{{ lookup('file', eos_root + '/packages/pkglists/cloud.txt').splitlines() | select('match', '^[^#].+') | list }}"
+
+  tasks:
+    - name: Install EOS Cloud packages via pacman
+      community.general.pacman:
+        name: "{{ cloud_packages }}"
+        state: present
+        update_cache: true
+
+    - name: Configure Synapse Cloud service supervision rules
+      ansible.builtin.copy:
+        dest: /etc/synapse/default.cfg
+        mode: "0644"
+        content: |
+          [nginx]
+          command=/usr/bin/nginx -g daemon\ off;
+          state=test -f /etc/nginx/nginx.conf
+
+          [redis]
+          command=/usr/bin/redis-server /etc/redis/redis.conf
+          state=test -f /etc/redis/redis.conf
+
+    - name: Enable Cloud system services on systemd hosts
+      ansible.builtin.systemd:
+        name: "{{ item }}"
+        enabled: true
+        state: started
+      loop:
+        - nginx
+        - redis
+        - docker
+        - synapse
+      when: ansible_service_mgr == "systemd"

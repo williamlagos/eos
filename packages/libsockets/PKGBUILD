@@ -1,0 +1,32 @@
+# Maintainer: William Lagos <william.lagos@icloud.com>
+pkgname=libsockets-git
+_pkgname=libsockets
+pkgver=r55.af3850d
+pkgrel=1
+pkgdesc="Lightweight C11 TCP/UDP socket library with async libuv integration (uv_sockets)"
+arch=('armv6h' 'armv7h' 'aarch64' 'x86_64')
+url="https://github.com/williamlagos/libsockets"
+license=('GPL3')
+depends=('glibc' 'libuv')
+makedepends=('cmake' 'git' 'pkgconf')
+provides=('libsockets')
+conflicts=('libsockets')
+source=("git+https://github.com/williamlagos/libsockets.git#branch=master")
+sha256sums=('SKIP')
+
+pkgver() {
+  cd "$_pkgname"
+  printf "r%s.%s" "$(git rev-list --count HEAD)" "$(git rev-parse --short HEAD)"
+}
+
+build() {
+  cmake -B build -S "$_pkgname" \
+    -DCMAKE_BUILD_TYPE=Release \
+    -DCMAKE_INSTALL_PREFIX=/usr \
+    -DSOCKETS_BUILD_EXAMPLES=OFF
+  cmake --build build
+}
+
+package() {
+  DESTDIR="$pkgdir" cmake --install build
+}

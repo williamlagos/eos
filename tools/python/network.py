@@ -1,22 +1,42 @@
-#!/usr/bin/python
-#
-# When running in bash:
-# /opt/scripts/network.py
-import subprocess,os
-import NetworkManager
+#!/usr/bin/env python3
+"""
+Monitor known NetworkManager Wi-Fi connections and start the fallback AP (create_ap)
+when no known network is reachable.
 
-ssids = []
+When running in bash:
+/opt/eos/bin/network.py
+"""
 
-while True:
-	for dev in NetworkManager.NetworkManager.GetDevices():
-	    if dev.DeviceType != NetworkManager.NM_DEVICE_TYPE_WIFI: continue
-	    for ap in dev.SpecificDevice().GetAccessPoints(): ssids.append(ap.Ssid)
+import os
+import subprocess
+import time
 
-	connections = os.listdir("/etc/NetworkManager/system-connections")
+import NetworkManager  # type: ignore
 
-	for con in connections:
-		if con in ssids: subprocess.call(["systemctl","start","create_ap"]
+CONNECTIONS_DIR = "/etc/NetworkManager/system-connections"
 
-# out = subprocess.check_output(["ifconfig","wlan0"])
-# while True:
-#	if 'inet' not in out: subprocess.call(["systemctl","start","create_ap"]) 
+
+def monitor_network(poll_interval: int = 10) -> None:
+    while True:
+        ssids = set()
+        for dev in NetworkManager.NetworkManager.GetDevices():
+            if dev.DeviceType != NetworkManager.NM_DEVICE_TYPE_WIFI:
+                continue
+            for ap in dev.SpecificDevice().GetAccessPoints():
+                ssids.add(ap.Ssid)
+
+        connections = (
+            os.listdir(CONNECTIONS_DIR) if os.path.isdir(CONNECTIONS_DIR) else []
+        )
+
+        matched = any(
+            con.removesuffix(".nmconnection") in ssids for con in connections
+        )
+        if not matched:
+            subprocess.run(["systemctl", "start", "create_ap"], check=False)
+
+        time.sleep(poll_interval)
+
+
+if __name__ == "__main__":
+    monitor_network()

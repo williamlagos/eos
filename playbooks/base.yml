@@ -1,0 +1,79 @@
+---
+- name: Provision EOS Base System (Arch Linux / Arch Linux ARM)
+  hosts: eos:all
+  become: true
+  vars:
+    eos_root: "{{ playbook_dir }}/.."
+    libsockets_repo: "https://github.com/williamlagos/libsockets.git"
+    libsockets_version: "master"
+    synapse_repo: "https://github.com/williamlagos/synapse.git"
+    synapse_version: "master"
+    synapse_port: 9460
+    base_packages: "{{ lookup('file', eos_root + '/packages/pkglists/base.txt').splitlines() | select('match', '^[^#].+') | list }}"
+
+  tasks:
+    - name: Update pacman package cache and install EOS base packages
+      community.general.pacman:
+        name: "{{ base_packages }}"
+        state: present
+        update_cache: true
+
+    - name: Create source build directory
+      ansible.builtin.file:
+        path: /usr/local/src/eos
+        state: directory
+        mode: "0755"
+
+    - name: Clone libsockets repository
+      ansible.builtin.git:
+        repo: "{{ libsockets_repo }}"
+        dest: /usr/local/src/eos/libsockets
+        version: "{{ libsockets_version }}"
+        force: true
+
+    - name: Build and install libsockets (libuv_sockets + libsockets)
+      ansible.builtin.command:
+        cmd: "{{ item }}"
+        chdir: /usr/local/src/eos/libsockets
+      loop:
+        - cmake -B build -S . -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr -DSOCKETS_BUILD_EXAMPLES=OFF
+        - cmake --build build --parallel
+        - cmake --install build
+      changed_when: true
+
+    - name: Clone synapse repository
+      ansible.builtin.git:
+        repo: "{{ synapse_repo }}"
+        dest: /usr/local/src/eos/synapse
+        version: "{{ synapse_version }}"
+        force: true
+
+    - name: Build and install synapse (linked with libsockets and libuv)
+      ansible.builtin.command:
+        cmd: "{{ item }}"
+        chdir: /usr/local/src/eos/synapse
+      loop:
+        - cmake -B build -S . -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_INSTALL_SYSCONFDIR=/etc
+        - cmake --build build --parallel
+        - cmake --install build
+      changed_when: true
+
+    - name: Ensure /etc/synapse directory exists
+      ansible.builtin.file:
+        path: /etc/synapse
+        state: directory
+        mode: "0755"
+
+    - name: Install synapse systemd unit
+      ansible.builtin.copy:
+        src: "{{ eos_root }}/packages/synapse/synapse.service"
+        dest: /usr/lib/systemd/system/synapse.service
+        mode: "0644"
+
+    - name: Enable and start synapse service on systemd hosts
+      ansible.builtin.systemd:
+        name: synapse
+        enabled: true
+        daemon_reload: true
+        state: started
+      when: ansible_service_mgr == "systemd"

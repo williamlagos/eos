@@ -1,0 +1,37 @@
+services:
+  eos-base:
+    build:
+      context: .
+      target: base
+    image: eos:base
+    container_name: eos-base
+    ports:
+      - "9460:9460"
+    restart: unless-stopped
+
+  eos-iot:
+    build:
+      context: .
+      target: iot
+    image: eos:iot
+    container_name: eos-iot
+    profiles:
+      - iot
+    ports:
+      - "9461:9460"
+    cap_add:
+      - NET_ADMIN
+    restart: unless-stopped
+
+  eos-cloud:
+    build:
+      context: .
+      target: cloud
+    image: eos:cloud
+    container_name: eos-cloud
+    profiles:
+      - cloud
+    ports:
+      - "8080:80"
+      - "9462:9460"
+    restart: unless-stopped

@@ -1,0 +1,9 @@
+---
+- name: Apply EOS Base Configuration
+  ansible.builtin.import_playbook: base.yml
+
+- name: Apply EOS IoT Profile
+  ansible.builtin.import_playbook: iot.yml
+
+- name: Apply EOS Cloud Profile
+  ansible.builtin.import_playbook: cloud.yml

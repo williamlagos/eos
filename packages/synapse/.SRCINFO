@@ -1,0 +1,25 @@
+pkgbase = synapse-git
+	pkgdesc = Smart reactive process control and sensor supervisor built with libuv and libsockets
+	pkgver = r120.0ed1cf6
+	pkgrel = 1
+	url = https://github.com/williamlagos/synapse
+	arch = armv6h
+	arch = armv7h
+	arch = aarch64
+	arch = x86_64
+	license = GPL3
+	makedepends = cmake
+	makedepends = git
+	makedepends = pkgconf
+	depends = glibc
+	depends = libuv
+	depends = libsockets
+	provides = synapse
+	conflicts = synapse
+	backup = etc/synapse/default.cfg
+	source = git+https://github.com/williamlagos/synapse.git#branch=master
+	source = synapse.service
+	sha256sums = SKIP
+	sha256sums = SKIP
+
+pkgname = synapse-git

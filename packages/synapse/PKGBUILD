@@ -1,0 +1,36 @@
+# Maintainer: William Lagos <william.lagos@icloud.com>
+pkgname=synapse-git
+_pkgname=synapse
+pkgver=r120.0ed1cf6
+pkgrel=1
+pkgdesc="Smart reactive process control and sensor supervisor built with libuv and libsockets"
+arch=('armv6h' 'armv7h' 'aarch64' 'x86_64')
+url="https://github.com/williamlagos/synapse"
+license=('GPL3')
+depends=('glibc' 'libuv' 'libsockets')
+makedepends=('cmake' 'git' 'pkgconf')
+provides=('synapse')
+conflicts=('synapse')
+backup=('etc/synapse/default.cfg')
+source=("git+https://github.com/williamlagos/synapse.git#branch=master"
+        "synapse.service")
+sha256sums=('SKIP'
+            'SKIP')
+
+pkgver() {
+  cd "$_pkgname"
+  printf "r%s.%s" "$(git rev-list --count HEAD)" "$(git rev-parse --short HEAD)"
+}
+
+build() {
+  cmake -B build -S "$_pkgname" \
+    -DCMAKE_BUILD_TYPE=Release \
+    -DCMAKE_INSTALL_PREFIX=/usr \
+    -DCMAKE_INSTALL_SYSCONFDIR=/etc
+  cmake --build build
+}
+
+package() {
+  DESTDIR="$pkgdir" cmake --install build
+  install -Dm644 "$srcdir/synapse.service" "$pkgdir/usr/lib/systemd/system/synapse.service"
+}

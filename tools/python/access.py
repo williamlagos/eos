@@ -1,26 +1,34 @@
-#!/usr/bin/python
+#!/usr/bin/env python3
+"""
+Mount host virtual filesystems (/dev, /sys, /run, /proc) and chroot into a target rootfs.
 
-# When running on bash:
-# chroot /opt/$1 /launch
-# chroot /opt/web /browser start
-# chroot /opt/x11 startx 
-# chroot /opt/x11 xinit /etc/X11/xinit/xinitrc
+Usage:
+    access.py [rootfs_path] [interpreter]
+"""
 
-# from subprocess import Popen
-# from optparse import OptionParser
-import subprocess,os,sys
+import os
+import subprocess
+import sys
 
-INTERPRETER = 'bin/sh'
+DEFAULT_INTERPRETER = "/bin/sh"
 
-ABSPATH = os.path.abspath('')
-DEVPATH = os.path.join(ABSPATH,'dev/')
-SYSPATH = os.path.join(ABSPATH,'sys/')
-RUNPATH = os.path.join(ABSPATH,'run/')
-PROCPATH = os.path.join(ABSPATH,'proc/')
 
-subprocess.call(['mount','--rbind','/dev',DEVPATH])
-subprocess.call(['mount','--rbind','/sys',SYSPATH])
-subprocess.call(['mount','--rbind','/run',RUNPATH])
-subprocess.call(['mount','-t','proc','proc',PROCPATH])
+def chroot_into(rootfs: str, interpreter: str = DEFAULT_INTERPRETER) -> int:
+    abspath = os.path.abspath(rootfs)
+    devpath = os.path.join(abspath, "dev")
+    syspath = os.path.join(abspath, "sys")
+    runpath = os.path.join(abspath, "run")
+    procpath = os.path.join(abspath, "proc")
 
-subprocess.call(['chroot',ABSPATH,INTERPRETER])
+    subprocess.run(["mount", "--rbind", "/dev", devpath], check=False)
+    subprocess.run(["mount", "--rbind", "/sys", syspath], check=False)
+    subprocess.run(["mount", "--rbind", "/run", runpath], check=False)
+    subprocess.run(["mount", "-t", "proc", "proc", procpath], check=False)
+
+    return subprocess.run(["chroot", abspath, interpreter], check=False).returncode
+
+
+if __name__ == "__main__":
+    target_dir = sys.argv[1] if len(sys.argv) > 1 else ""
+    target_shell = sys.argv[2] if len(sys.argv) > 2 else DEFAULT_INTERPRETER
+    sys.exit(chroot_into(target_dir, target_shell))
