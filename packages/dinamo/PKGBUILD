@@ -1,0 +1,44 @@
+# Maintainer: William Lagos <william.lagos@icloud.com>
+pkgname=dinamo-git
+_pkgname=dinamo
+pkgver=r20.153f130
+pkgrel=1
+pkgdesc="Retro arcade and Game Boy space shooter built on SDL2 and Elements C++ core for Steam Deck and EOS runtime"
+arch=('armv6h' 'armv7h' 'aarch64' 'x86_64')
+url="https://github.com/williamlagos/dinamo"
+license=('MIT')
+depends=('elements' 'gcc-libs' 'glibc' 'libpng' 'sdl2')
+makedepends=('cmake' 'git' 'ninja' 'pkgconf')
+provides=('dinamo')
+conflicts=('dinamo')
+source=("git+https://github.com/williamlagos/dinamo.git#branch=master")
+sha256sums=('SKIP')
+
+pkgver() {
+  cd "$_pkgname"
+  printf "r%s.%s" "$(git rev-list --count HEAD)" "$(git rev-parse --short HEAD)"
+}
+
+build() {
+  cmake -B build -S "$_pkgname/sdl2" -G Ninja \
+    -DCMAKE_BUILD_TYPE=Release \
+    -DCMAKE_INSTALL_PREFIX=/usr
+  cmake --build build --parallel
+}
+
+check() {
+  ctest --test-dir build --output-on-failure
+}
+
+package() {
+  install -Dm755 build/dinamo_sdl2 "$pkgdir/usr/bin/dinamo_sdl2"
+  install -d "$pkgdir/usr/share/dinamo"
+  cp -r "$_pkgname/shared" "$pkgdir/usr/share/dinamo/shared"
+
+  install -Dm755 /dev/stdin "$pkgdir/usr/bin/dinamo" << 'EOF'
+#!/usr/bin/env bash
+set -euo pipefail
+export DINAMO_SHARED_DIR="${DINAMO_SHARED_DIR:-/usr/share/dinamo/shared}"
+exec /usr/bin/dinamo_sdl2 --shared-dir "${DINAMO_SHARED_DIR}" "$@"
+EOF
+}

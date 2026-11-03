@@ -1,0 +1,37 @@
+# Maintainer: William Lagos <william.lagos@icloud.com>
+pkgname=elements-git
+_pkgname=elements
+pkgver=r15.d82a0e8
+pkgrel=1
+pkgdesc="C++17 spatial, sensor, and game engine primitives library with pybind11 Python bindings"
+arch=('armv6h' 'armv7h' 'aarch64' 'x86_64')
+url="https://github.com/williamlagos/elements"
+license=('GPL3')
+depends=('gcc-libs' 'glibc' 'python')
+makedepends=('cmake' 'git' 'pkgconf' 'pybind11' 'python-setuptools')
+provides=('elements')
+conflicts=('elements')
+source=("git+https://github.com/williamlagos/elements.git#branch=master")
+sha256sums=('SKIP')
+
+pkgver() {
+  cd "$_pkgname"
+  printf "r%s.%s" "$(git rev-list --count HEAD)" "$(git rev-parse --short HEAD)"
+}
+
+build() {
+  cmake -B build -S "$_pkgname" \
+    -DCMAKE_BUILD_TYPE=Release \
+    -DCMAKE_INSTALL_PREFIX=/usr
+  cmake --build build --parallel
+}
+
+package() {
+  DESTDIR="$pkgdir" cmake --install build
+  local _py_site
+  _py_site="$(python -c 'import site; print(site.getsitepackages()[0])')"
+  if compgen -G "build/_elements*.so" > /dev/null; then
+    install -d "$pkgdir$_py_site"
+    install -Dm755 build/_elements*.so "$pkgdir$_py_site/"
+  fi
+}
