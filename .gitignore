@@ -29,6 +29,7 @@ CMakeFiles/
 CMakeCache.txt
 Makefile
 *.cmake
+!tools/cross/*.cmake
 
 # Crosstools tarballs
 x-tools*

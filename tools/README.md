@@ -4,10 +4,10 @@ Utilities, cross-compilation configurations, and service stacks for EOS IoT and 
 
 ## Directory Structure
 
-- `cross/`: `crosstool-NG` configurations for Arch Linux ARM targets:
-  - `xtools-dotconfig-v6`: ARMv6 hard-float (`armv6h` — Raspberry Pi 1 / Zero / Zero W).
-  - `xtools-dotconfig-v7`: ARMv7 hard-float (`armv7h` — Raspberry Pi 2 / 3 32-bit).
-  - `xtools-dotconfig-v8`: ARMv8 64-bit (`aarch64` — Raspberry Pi 3 / 4 / 5 & ARM Cloud VMs).
+- `cross/`: `crosstool-NG` configurations and CMake toolchain files for Arch Linux ARM targets:
+  - `xtools-dotconfig-v6` & `toolchain-armv6h.cmake`: ARMv6 hard-float (`armv6h` — Raspberry Pi 1 / Zero / Zero W).
+  - `xtools-dotconfig-v7` & `toolchain-armv7h.cmake`: ARMv7 hard-float (`armv7h` — Raspberry Pi 2 / 3 32-bit).
+  - `xtools-dotconfig-v8` & `toolchain-aarch64.cmake`: ARMv8 64-bit (`aarch64` — Raspberry Pi 3 / 4 / 5, ARM handhelds & Cloud VMs).
 - `python/`: Python 3 hardware, network, audio, and chroot scripts installed to `/opt/eos/bin` on EOS IoT targets:
   - `connect.py`, `network.py`, `ssids.py`: NetworkManager Wi-Fi provisioning and fallback AP supervision.
   - `buttons.py`, `gamepad.py`, `rebind.py`, `key-rebind.py`: USB input / controller udev rebind and event hooks.
