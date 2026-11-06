@@ -1,16 +1,19 @@
 #!/usr/bin/env python3
 """
-Gamepad code integration to Kodi event server.
+EOS Gamepad & Chord Daemon for A/V (Kodi), SDL2 Games (Dinamo), and Interactive Runtimes.
 
-When running on bash:
-/opt/eos/bin/gamepad.py
+Supports D-Pad / thumbstick navigation and a Select+Start controller chord
+to switch active EOS runtime services via /opt/eos/bin/switcher.py.
 """
 
+import os
 import subprocess
 import sys
 import time
 
 import pygame
+
+CHORD_TARGET_SERVICE = os.environ.get("EOS_CHORD_SERVICE", "dinamo")
 
 try:
     pygame.init()
@@ -47,6 +50,12 @@ def get():
 def capture():
     while True:
         btns = get()
+        # Select + Start chord switches foreground runtime service
+        if btns[5] > 0 and btns[6] > 0:
+            subprocess.run(["/opt/eos/bin/switcher.py", CHORD_TARGET_SERVICE], check=False)
+            time.sleep(0.5)
+            continue
+
         if btns[0] < 0:
             subprocess.run(["kodi-send", "--action=Left"], check=False)
         elif btns[0] > 0:

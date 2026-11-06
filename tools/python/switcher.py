@@ -1,18 +1,21 @@
 #!/usr/bin/env python3
 """
-Switch foreground systemd service (e.g. pause kodi while another service runs).
+Switch foreground EOS runtime service (e.g. toggle between dinamo, retro, kodi, or custom apps).
 
-When running in bash:
-/opt/eos/bin/switcher.py <service_name>
+Usage:
+    /opt/eos/bin/switcher.py <target_service> [--home-service <home_service>]
 """
 
+import os
 import subprocess
 import sys
 import time
 
+DEFAULT_HOME_SERVICE = os.environ.get("EOS_HOME_SERVICE", "dinamo")
 
-def switch_service(target_service: str) -> int:
-    subprocess.run(["systemctl", "stop", "kodi"], check=False)
+
+def switch_service(target_service: str, home_service: str = DEFAULT_HOME_SERVICE) -> int:
+    subprocess.run(["systemctl", "stop", home_service], check=False)
     subprocess.run(["systemctl", "stop", "kodi-gamepad"], check=False)
     subprocess.run(["systemctl", "start", target_service], check=False)
 
@@ -27,9 +30,11 @@ def switch_service(target_service: str) -> int:
         if res.returncode != 0:
             break
 
-    return subprocess.run(["systemctl", "start", "kodi"], check=False).returncode
+    subprocess.run(["synapse-client", "reload"], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, check=False)
+    return subprocess.run(["systemctl", "start", home_service], check=False).returncode
 
 
 if __name__ == "__main__":
     if len(sys.argv) > 1:
-        sys.exit(switch_service(sys.argv[1]))
+        home = sys.argv[2] if len(sys.argv) > 2 else DEFAULT_HOME_SERVICE
+        sys.exit(switch_service(sys.argv[1], home))
