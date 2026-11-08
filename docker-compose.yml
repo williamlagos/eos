@@ -33,5 +33,36 @@ services:
       - cloud
     ports:
       - "8080:80"
+      - "8000:8000"
       - "9462:9460"
+    restart: unless-stopped
+
+  eos-runtime:
+    build:
+      context: .
+      target: runtime
+    image: eos:runtime
+    container_name: eos-runtime
+    profiles:
+      - runtime
+    environment:
+      SDL_VIDEODRIVER: "${SDL_VIDEODRIVER:-dummy}"
+      SDL_AUDIODRIVER: "${SDL_AUDIODRIVER:-dummy}"
+    ports:
+      - "9463:9460"
+    restart: unless-stopped
+
+  eos-sdk:
+    build:
+      context: .
+      target: sdk
+    image: eos:sdk
+    container_name: eos-sdk
+    profiles:
+      - sdk
+    environment:
+      SDL_VIDEODRIVER: "${SDL_VIDEODRIVER:-dummy}"
+      SDL_AUDIODRIVER: "${SDL_AUDIODRIVER:-dummy}"
+    ports:
+      - "9464:9460"
     restart: unless-stopped

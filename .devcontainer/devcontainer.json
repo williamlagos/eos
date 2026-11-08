@@ -1,11 +1,11 @@
 {
-	"name": "EOS Development Container",
+	"name": "EOS SDK Development Container",
 	"build": {
 		"dockerfile": "../Dockerfile",
 		"context": "..",
-		"target": "base"
+		"target": "sdk"
 	},
-	"forwardPorts": [9460],
+	"forwardPorts": [8000, 9460],
 	"customizations": {
 		"vscode": {
 			"extensions": [
