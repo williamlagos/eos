@@ -42,7 +42,7 @@ This solution architecture defines a low-cost, zero-trust **Google Cloud & Terra
 
 ## 3. Technical decomposition of the workload
 
-1. **Multi-Arch Artifact & Image Registry Layer**: Stores `linux/amd64` and `linux/arm64` OCI container manifests (`eos:base`, `eos:iot`, `eos:cloud`) with automated retention and cleanup rules.
+1. **Multi-Arch Artifact & Image Registry Layer**: Stores `linux/amd64` and `linux/arm64` OCI container manifests (`eos:base`, `eos:iot`, `eos:runtime`, `eos:sdk`, `eos:cloud`) with automated retention and cleanup rules.
 2. **Network & Perimeter Security Layer**: Dedicated VPC subnet with split firewall policies—public ingress only for web traffic (`:80`, `:443`) and identity-proxied private ingress for SSH (`:22`) and Synapse TCP control (`:9460`).
 3. **Stateful VM & Fleet Hub Compute Layer**: Single configurable VM (`x86_64` or `aarch64`) running `synapse.service`, Nginx, Redis, and Docker workloads, provisioned via Ansible.
 4. **Scale-to-Zero Serverless Container Layer**: Optional serverless container runtime for stateless companion APIs/frontends that scales to zero when idle.
