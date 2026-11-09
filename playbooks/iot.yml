@@ -38,6 +38,10 @@
           command=/usr/bin/python3 /opt/eos/bin/sound.py
           state=test -d /dev/snd
 
+          [sensors]
+          command=/usr/bin/python3 /opt/eos/bin/sensors.py --once
+          state=/usr/bin/python3 /opt/eos/bin/sensors.py --check
+
     - name: Enable IoT system services on systemd hosts
       ansible.builtin.systemd:
         name: "{{ item }}"

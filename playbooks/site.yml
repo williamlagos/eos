@@ -5,5 +5,8 @@
 - name: Apply EOS IoT Profile
   ansible.builtin.import_playbook: iot.yml
 
+- name: Apply EOS Runtime Profile
+  ansible.builtin.import_playbook: runtime.yml
+
 - name: Apply EOS Cloud Profile
   ansible.builtin.import_playbook: cloud.yml

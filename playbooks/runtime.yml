@@ -1,0 +1,76 @@
+---
+- name: Provision EOS Runtime Node (Steam Deck, Raspberry Pi, Interactive SBCs & A/V)
+  hosts: eos_runtime
+  become: true
+  vars:
+    eos_root: "{{ playbook_dir }}/.."
+    runtime_packages: "{{ lookup('file', eos_root + '/packages/pkglists/runtime.txt').splitlines() | select('match', '^[^#].+') | list }}"
+
+  tasks:
+    - name: Install EOS Runtime packages via pacman
+      community.general.pacman:
+        name: "{{ runtime_packages }}"
+        state: present
+        update_cache: true
+
+    - name: Create /opt/eos/bin directory for Runtime & Sensor utilities
+      ansible.builtin.file:
+        path: /opt/eos/bin
+        state: directory
+        mode: "0755"
+
+    - name: Deploy EOS Python 3 sensor, gamepad, retro, and devkit utilities
+      ansible.builtin.copy:
+        src: "{{ eos_root }}/tools/python/"
+        dest: /opt/eos/bin/
+        mode: "0755"
+
+    - name: Link eos-devkit CLI into /usr/local/bin
+      ansible.builtin.file:
+        src: /opt/eos/bin/devkit.py
+        dest: /usr/local/bin/eos-devkit
+        state: link
+
+    - name: Configure udev permissions for DRM/KMS, HID Gyro, IIO Sensors, I2C, and GPIO
+      ansible.builtin.copy:
+        dest: /etc/udev/rules.d/99-eos-runtime.rules
+        mode: "0644"
+        content: |
+          SUBSYSTEM=="drm", KERNEL=="card[0-9]*|renderD[0-9]*", TAG+="uaccess", GROUP="video", MODE="0660"
+          SUBSYSTEM=="input", KERNEL=="event[0-9]*|js[0-9]*", TAG+="uaccess", GROUP="input", MODE="0660"
+          SUBSYSTEM=="hidraw", KERNEL=="hidraw[0-9]*", TAG+="uaccess", GROUP="input", MODE="0660"
+          SUBSYSTEM=="iio", KERNEL=="iio:device[0-9]*", TAG+="uaccess", GROUP="input", MODE="0660"
+          SUBSYSTEM=="i2c-dev", KERNEL=="i2c-[0-9]*", GROUP="i2c", MODE="0660"
+          SUBSYSTEM=="gpio", KERNEL=="gpiochip[0-9]*", GROUP="gpio", MODE="0660"
+
+    - name: Configure Synapse Runtime & Sensor supervision rules
+      ansible.builtin.copy:
+        dest: /etc/synapse/default.cfg
+        mode: "0644"
+        content: |
+          [network]
+          command=/usr/bin/python3 /opt/eos/bin/ssids.py
+          state=test -d /sys/class/net
+
+          [audio]
+          command=/usr/bin/python3 /opt/eos/bin/sound.py
+          state=test -d /dev/snd
+
+          [sensors]
+          command=/usr/bin/python3 /opt/eos/bin/sensors.py --once
+          state=/usr/bin/python3 /opt/eos/bin/sensors.py --check
+
+          [gamepad]
+          command=/usr/bin/python3 /opt/eos/bin/gamepad.py
+          state=test -d /dev/input
+
+    - name: Enable Runtime system services on systemd hosts
+      ansible.builtin.systemd:
+        name: "{{ item }}"
+        enabled: true
+        state: started
+      loop:
+        - NetworkManager
+        - avahi-daemon
+        - synapse
+      when: ansible_service_mgr == "systemd"

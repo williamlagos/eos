@@ -26,6 +26,10 @@
           command=/usr/bin/redis-server /etc/redis/redis.conf
           state=test -f /etc/redis/redis.conf
 
+          [elements-server]
+          command=/usr/bin/python3 -m uvicorn app:app --host 0.0.0.0 --port 8000
+          state=test -f /opt/eos/elements-server/app.py
+
     - name: Enable Cloud system services on systemd hosts
       ansible.builtin.systemd:
         name: "{{ item }}"

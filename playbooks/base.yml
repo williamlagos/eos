@@ -8,6 +8,8 @@
     libsockets_version: "master"
     synapse_repo: "https://github.com/williamlagos/synapse.git"
     synapse_version: "master"
+    elements_repo: "https://github.com/williamlagos/elements.git"
+    elements_version: "master"
     synapse_port: 9460
     base_packages: "{{ lookup('file', eos_root + '/packages/pkglists/base.txt').splitlines() | select('match', '^[^#].+') | list }}"
 
@@ -54,6 +56,23 @@
         chdir: /usr/local/src/eos/synapse
       loop:
         - cmake -B build -S . -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_INSTALL_SYSCONFDIR=/etc
+        - cmake --build build --parallel
+        - cmake --install build
+      changed_when: true
+
+    - name: Clone elements C++17 primitives repository
+      ansible.builtin.git:
+        repo: "{{ elements_repo }}"
+        dest: /usr/local/src/eos/elements
+        version: "{{ elements_version }}"
+        force: true
+
+    - name: Build and install elements core library and headers
+      ansible.builtin.command:
+        cmd: "{{ item }}"
+        chdir: /usr/local/src/eos/elements
+      loop:
+        - cmake -B build -S . -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr
         - cmake --build build --parallel
         - cmake --install build
       changed_when: true

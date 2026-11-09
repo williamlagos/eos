@@ -77,4 +77,52 @@ Vagrant.configure("2") do |config|
       ansible.limit = "eos_cloud"
     end
   end
+
+  # ---------------------------------------------------------------------------
+  # 4. eos-runtime (Interactive SBC, A/V, Steam Deck & SDL2/KMSDRM profile)
+  # ---------------------------------------------------------------------------
+  config.vm.define "eos-runtime", autostart: false do |runtime|
+    runtime.vm.hostname = "eos-runtime"
+    runtime.vm.network "forwarded_port", guest: 9460, host: 9463, host_ip: "127.0.0.1", auto_correct: true
+
+    runtime.vm.provider "docker" do |d|
+      d.build_dir = "."
+      d.build_args = ["--target", "runtime"]
+      d.remains_running = true
+    end
+
+    runtime.vm.provider "virtualbox" do |vb|
+      vb.memory = "1024"
+      vb.cpus = 2
+    end
+
+    runtime.vm.provision "ansible", run: "never" do |ansible|
+      ansible.playbook = "playbooks/site.yml"
+      ansible.limit = "eos_runtime"
+    end
+  end
+
+  # ---------------------------------------------------------------------------
+  # 5. eos-sdk (Multi-Arch C++17 / Python / SDL2 / Cross-Compiler SDK profile)
+  # ---------------------------------------------------------------------------
+  config.vm.define "eos-sdk", autostart: false do |sdk|
+    sdk.vm.hostname = "eos-sdk"
+    sdk.vm.network "forwarded_port", guest: 9460, host: 9464, host_ip: "127.0.0.1", auto_correct: true
+
+    sdk.vm.provider "docker" do |d|
+      d.build_dir = "."
+      d.build_args = ["--target", "sdk"]
+      d.remains_running = true
+    end
+
+    sdk.vm.provider "virtualbox" do |vb|
+      vb.memory = "2048"
+      vb.cpus = 2
+    end
+
+    sdk.vm.provision "ansible", run: "never" do |ansible|
+      ansible.playbook = "playbooks/site.yml"
+      ansible.limit = "eos_runtime"
+    end
+  end
 end
